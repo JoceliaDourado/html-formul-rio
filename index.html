@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>formulário de clientes</title>
+
+</head>
+
+<body>
+    <fieldset>
+        <legend><b>FORMULÁRIO DE CLIENTES</b></legend>
+
+        <label for="cliente">Nome completo:</label><br>
+        <input type="text" id="nome" /><br>
+        <div>
+            <label for="cliente">Tipo de cliente:</label>
+            <input type="submit" name="submit" id="searchtypes" value="pesquisar">
+            <br>
+            <br>
+
+            <input type="text" id="tipo1" /><br>
+            <br>
+
+            <input type="text" id="tipo2" name="tipo de cliente" /><br>
+            <br>
+            <input type="text" id="tipo3" name="tipo de cliente" /><br>
+            <br>
+            <input type="text" id="tipo4" name="tipo de cliente" /><br>
+            <br>
+            <input type="text" id="tipo5" name="tipo de cliente" /><br>
+            <br>
+        </div>
+
+        <div>
+            <label for="id">Id:</label>
+            <br>
+            <input type="text" id="Cliente" />
+            <input type="submit" name="submit" id="submitbyid" value="pesquisar">
+            <br>
+            <label for="email">E-mail:</label>
+            <br>
+            <input type="E-email" id="E-mail">
+
+            <input type="submit" name="submit" id="submitbyemail" value="pesquisar">
+
+            <div>
+                <label for="telefone">Telefone:</label><br>
+                <input type="text" id="Telefone" /><br>
+            </div>
+
+            <div>
+                <label for="cep">Cep:</label><br>
+                <input type="text" id="cep" />
+                <input type="submit" name="submit" id="searchcep" value="pesquisar">
+            </div>
+
+            <div>
+                <label for="endereco">Endereço:</label><br>
+                <input type="text" id="endereco" />
+            </div>
+
+            <div>
+                <label for="numero">Nº:</label><br>
+                <input type="text" id="numero" />
+            </div>
+
+            <div>
+                <label for="complemento">Complemento:</label><br>
+                <input type="text" id="complemento" />
+            </div>
+
+            <label for="bairro">Bairro:</label><br>
+            <input type="text" id="bairro" /><br>
+        </div>
+
+        <div>
+            <label for="cidade">Cidade:</label><br>
+            <input type="text" id="cidade" /><br>
+            <label for="estado">Estado:</label><br>
+            <input type="text" id="estado"><br>
+        </div>
+        <div>
+            <label for="tipo de cliente">Tipo de cliente:</label><br>
+            <input type="text" id="tipodecliente"/><br>
+        </div>
+
+        <input type="submit" name="submit" id="submit" value="Cadastrar">
+
+    </fieldset>
+    <script>
+        const options = {method: "GET", mode: "cors", caches: "default", headers: {"Content-Type": "application/json"}};
+
+        const searchById = document.getElementById("searchcep");
+
+        searchById.addEventListener("click", e => {
+            const cep = document.getElementById("cep");
+            const cepWithoutHyphen = cep.value.replace("-", "");
+
+            fetch(`https://viacep.com.br/ws/${cepWithoutHyphen}/json/`, options).then(response => {
+                response.json().then(data => {
+                    if ("erro" in data) {
+                        alert('CEP inexistente');
+                        return;
+                    }
+
+                    document.getElementById("bairro").value = data.bairro;
+                    document.getElementById("cidade").value = data.localidade;
+                    document.getElementById("endereco").value = data.logradouro;
+                    document.getElementById("estado").value = data.uf;
+                });
+            }).catch(() => {
+                alert('CEP inexistente');
+            });
+        });
+
+        document.getElementById('searchtypes').onclick = function () {
+            fetch(`http://localhost:3000/tipos`, options).then(response => {
+                response.json().then(data => {
+                    document.getElementById('tipo1').value = data[0].name;
+                    document.getElementById('tipo2').value = data[1].name;
+                    document.getElementById('tipo3').value = data[2].name;
+                    document.getElementById('tipo4').value = data[3].name;
+                    document.getElementById('tipo5').value = data[4].name;
+                });
+            }).catch(response => console.log(response));
+        };
+
+        document.getElementById('submitbyid').onclick = function () {
+			const id = document.getElementById('Cliente').value;
+
+			fetch(`http://localhost:3000/cliente/buscar/id/` + id, options).then(response => {
+				response.json().then(data => {
+					document.getElementById('endereco').value = data.addressType;
+					document.getElementById('cidade').value = data.city;
+					document.getElementById('complemento').value = data.complement;
+					document.getElementById('tipodecliente').value = data.customerType;
+					document.getElementById('Cliente').value = data.customers_id;
+					document.getElementById('bairro').value = data.district;
+					document.getElementById('E-mail').value = data.email;
+					document.getElementById('nome').value = data.name;
+					document.getElementById('numero').value = data.number;
+					document.getElementById('Telefone').value = data.phone;
+					document.getElementById('estado').value = data.state;
+					document.getElementById('cep').value = data.zipCode;
+				}).catch(response => console.log(response));
+			}).catch(response => console.log(response));
+		};
+        
+        document.getElementById('submitbyemail').onclick = function () {
+			const email = document.getElementById('E-mail').value;
+
+			fetch(`http://localhost:3000/cliente/buscar/email/` + email, options).then(response => {
+				response.json().then(data => {
+					document.getElementById('endereco').value = data.addressType;
+					document.getElementById('cidade').value = data.city;
+					document.getElementById('complemento').value = data.complement;
+					document.getElementById('tipodecliente').value = data.customerType;
+					document.getElementById('Cliente').value = data.customers_id;
+					document.getElementById('bairro').value = data.district;
+					document.getElementById('Cliente').value = data.customers_id;
+					document.getElementById('nome').value = data.name;
+					document.getElementById('numero').value = data.number;
+					document.getElementById('Telefone').value = data.phone;
+					document.getElementById('estado').value = data.state;
+					document.getElementById('cep').value = data.zipCode;
+				}).catch(response => console.log(response));
+			}).catch(response => console.log(response));
+		};
+        
+        document.getElementById('submit').onclick = function () {
+			const bodyStringified = JSON.stringify({
+				nome: document.getElementById('nome').value,
+				telefone: document.getElementById('Telefone').value,
+				email: document.getElementById('E-mail').value,
+				logradouro: document.getElementById('endereco').value,
+				numero: document.getElementById('numero').value,
+				complemento: document.getElementById('complemento').value,
+				bairro: document.getElementById('bairro').value,
+				cidade: document.getElementById('cidade').value,
+				uf: document.getElementById('estado').value,
+				cep: document.getElementById('cep').value,
+				tipoDeCliente: document.getElementById('tipodecliente').value
+			});
+
+			const optionsWithBody = {...options, method: "POST", body: bodyStringified};
+
+			fetch('http://localhost:3000/cliente/gravar', optionsWithBody).then(response => {
+				response.json().then(() => alert('Dados gravados com sucesso!')).catch(response => console.log(response));
+			}).catch(response => console.log(response));
+		};
+    </script>
+
+</body>
+
+</html>
